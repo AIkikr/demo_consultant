@@ -2,15 +2,18 @@ import { useState, useEffect } from "react";
 import { ChatInterface } from "@/components/chat-interface";
 import { ModeSelector } from "@/components/mode-selector";
 import { VoiceControls } from "@/components/voice-controls";
+import { MicrophoneDiagnostic } from "@/components/microphone-diagnostic";
 import { useToast } from "@/hooks/use-toast";
 import { type ConsultantMode } from "@shared/schema";
-import { Brain, Languages, Settings2 } from "lucide-react";
+import { Brain, Languages, Settings2, Mic } from "lucide-react";
 
 export default function Home() {
   const [currentMode, setCurrentMode] = useState<ConsultantMode>("guide");
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [currentLanguage, setCurrentLanguage] = useState<"JP" | "EN">("JP");
   const [isVoiceEnabled, setIsVoiceEnabled] = useState(true);
+  const [showMicDiagnostic, setShowMicDiagnostic] = useState(false);
+  const [microphoneReady, setMicrophoneReady] = useState(false);
   const { toast } = useToast();
 
   // Initialize session on mount
@@ -79,11 +82,21 @@ export default function Home() {
             {/* Voice Status & Language Controls */}
             <div className="flex items-center space-x-4">
               <div className="hidden sm:flex items-center space-x-2 px-3 py-1.5 bg-slate-100 rounded-full">
-                <div className={`w-2 h-2 rounded-full animate-pulse ${isVoiceEnabled ? 'bg-green-500' : 'bg-red-500'}`}></div>
+                <div className={`w-2 h-2 rounded-full animate-pulse ${microphoneReady ? 'bg-green-500' : 'bg-red-500'}`}></div>
                 <span className="text-sm text-slate-600">
-                  {isVoiceEnabled ? '音声対応中' : '音声無効'}
+                  {microphoneReady ? '音声対応中' : '音声設定中'}
                 </span>
               </div>
+              
+              <button 
+                onClick={() => setShowMicDiagnostic(!showMicDiagnostic)}
+                className="flex items-center space-x-1 px-3 py-1.5 bg-amber-100 text-amber-700 rounded-lg hover:bg-amber-200 transition-colors"
+                title="マイク診断"
+                data-testid="button-mic-diagnostic"
+              >
+                <Mic className="w-4 h-4" />
+                <span className="text-sm font-medium">診断</span>
+              </button>
               
               <button 
                 onClick={handleLanguageToggle}
@@ -99,6 +112,14 @@ export default function Home() {
       </header>
 
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        
+        {/* Microphone Diagnostic Panel */}
+        {showMicDiagnostic && (
+          <div className="mb-6">
+            <MicrophoneDiagnostic onMicrophoneReady={setMicrophoneReady} />
+          </div>
+        )}
+        
         <div className="grid lg:grid-cols-4 gap-6">
           
           {/* Mode Selector */}

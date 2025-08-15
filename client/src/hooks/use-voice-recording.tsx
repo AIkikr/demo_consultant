@@ -29,11 +29,18 @@ export function useVoiceRecording() {
 
   const startRecording = useCallback(async (sessionId: string, mode: ConsultantMode) => {
     try {
+      // Check microphone permissions first
+      const permissions = await navigator.permissions.query({ name: 'microphone' as PermissionName });
+      console.log('Microphone permission status:', permissions.state);
+      
       const stream = await navigator.mediaDevices.getUserMedia({ 
         audio: {
           echoCancellation: true,
           noiseSuppression: true,
-          sampleRate: 16000
+          autoGainControl: true,
+          sampleRate: 44100, // Higher sample rate for better quality
+          channelCount: 1,    // Mono recording
+          volume: 1.0
         } 
       });
       
@@ -45,9 +52,23 @@ export function useVoiceRecording() {
       source.connect(analyser);
       analyserRef.current = analyser;
       
-      const mediaRecorder = new MediaRecorder(stream, {
-        mimeType: 'audio/webm;codecs=opus'
-      });
+      // Try different audio formats for better Windows compatibility
+      let mimeType = 'audio/webm;codecs=opus';
+      if (!MediaRecorder.isTypeSupported(mimeType)) {
+        mimeType = 'audio/mp4';
+        if (!MediaRecorder.isTypeSupported(mimeType)) {
+          mimeType = 'audio/wav';
+          if (!MediaRecorder.isTypeSupported(mimeType)) {
+            mimeType = ''; // Use default
+          }
+        }
+      }
+      
+      console.log('Using MIME type:', mimeType);
+      
+      const mediaRecorder = new MediaRecorder(stream, 
+        mimeType ? { mimeType } : undefined
+      );
       
       audioChunksRef.current = [];
       
@@ -57,15 +78,16 @@ export function useVoiceRecording() {
         }
       };
       
-      mediaRecorder.start();
+      // Start recording with smaller chunks for better processing
+      mediaRecorder.start(250); // Record in 250ms chunks
       mediaRecorderRef.current = mediaRecorder;
       setIsRecording(true);
       setRecordingTime(0);
       
-      // Start timer
+      // Start timer with shorter auto-stop for smaller payloads
       timerRef.current = setInterval(() => {
         setRecordingTime(prev => {
-          if (prev >= 60) { // Auto-stop after 60 seconds
+          if (prev >= 30) { // Auto-stop after 30 seconds to keep payload smaller
             stopRecording();
             return prev;
           }
@@ -78,9 +100,24 @@ export function useVoiceRecording() {
       
     } catch (error) {
       console.error('Failed to start recording:', error);
+      
+      let errorMessage = "マイクへのアクセスが許可されていません。";
+      
+      if (error instanceof Error) {
+        if (error.name === 'NotAllowedError') {
+          errorMessage = "マイクのアクセス許可が必要です。ブラウザのアドレスバーの左にあるマイクアイコンをクリックして許可してください。";
+        } else if (error.name === 'NotFoundError') {
+          errorMessage = "マイクが見つかりません。マイクが接続されているか確認してください。";
+        } else if (error.name === 'NotReadableError') {
+          errorMessage = "マイクが他のアプリケーションで使用中です。他のアプリを閉じてからお試しください。";
+        } else if (error.name === 'OverconstrainedError') {
+          errorMessage = "マイクの設定に問題があります。異なるマイクをお試しください。";
+        }
+      }
+      
       toast({
         title: "録音エラー",
-        description: "マイクへのアクセスが許可されていません。ブラウザの設定を確認してください。",
+        description: errorMessage,
         variant: "destructive",
       });
     }
