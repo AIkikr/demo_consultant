@@ -44,7 +44,7 @@ export function TranscriptHistory({ sessionId }: TranscriptHistoryProps) {
 
   if (!sessionId || messages.length === 0) {
     return (
-      <Card>
+      <Card className="insight-card">
         <CardHeader>
           <CardTitle className="flex items-center space-x-2">
             <Clock className="w-5 h-5" />
@@ -64,7 +64,7 @@ export function TranscriptHistory({ sessionId }: TranscriptHistoryProps) {
   }
 
   return (
-    <Card>
+    <Card className="insight-card">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           <Clock className="w-5 h-5" />

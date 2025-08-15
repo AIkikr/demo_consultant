@@ -64,10 +64,10 @@ export default function Home() {
   };
 
   return (
-    <div className="font-inter bg-gradient-to-br from-slate-50 via-blue-50 to-indigo-50 min-h-screen">
+    <div className="font-inter insight-smith-bg min-h-screen">
       
       {/* Header */}
-      <header className="bg-white shadow-sm border-b border-slate-200 sticky top-0 z-50">
+      <header className="insight-header sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between items-center h-16">
             <div className="flex items-center space-x-3">
@@ -125,7 +125,7 @@ export default function Home() {
           
           {/* Mode Selector */}
           <div className="lg:col-span-1">
-            <div className="bg-white rounded-2xl shadow-lg border border-slate-200 p-6 sticky top-24">
+            <div className="insight-card rounded-2xl shadow-lg p-6 sticky top-24">
               <h2 className="text-lg font-semibold text-slate-800 mb-4 flex items-center">
                 <Settings2 className="w-5 h-5 mr-2 text-blue-600" />
                 対話モード
@@ -154,7 +154,7 @@ export default function Home() {
           
           {/* Chat Interface */}
           <div className="lg:col-span-3">
-            <div className="bg-white rounded-2xl shadow-lg border border-slate-200 h-[calc(100vh-200px)] flex flex-col">
+            <div className="insight-card-elevated rounded-2xl shadow-lg h-[calc(100vh-200px)] flex flex-col">
               
               {/* Chat Header */}
               <div className="p-6 border-b border-slate-200 flex items-center justify-between">

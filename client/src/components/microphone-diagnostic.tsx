@@ -157,7 +157,7 @@ export function MicrophoneDiagnostic({ onMicrophoneReady }: MicrophoneDiagnostic
   };
 
   return (
-    <Card className="w-full">
+    <Card className="w-full insight-card">
       <CardHeader>
         <CardTitle className="flex items-center space-x-2">
           {getStatusIcon()}
