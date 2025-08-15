@@ -121,7 +121,7 @@ export default function Home() {
           </div>
         )}
         
-        <div className="grid lg:grid-cols-5 gap-6">
+        <div className="grid lg:grid-cols-5 gap-8">
           
           {/* Mode Selector */}
           <div className="lg:col-span-1">
@@ -153,7 +153,7 @@ export default function Home() {
           </div>
           
           {/* Chat Interface */}
-          <div className="lg:col-span-3">
+          <div className="lg:col-span-3 background-showcase">
             <div className="insight-card-elevated rounded-2xl shadow-lg h-[calc(100vh-200px)] flex flex-col">
               
               {/* Chat Header */}
@@ -186,7 +186,7 @@ export default function Home() {
           </div>
 
           {/* Transcript History */}
-          <div className="lg:col-span-1">
+          <div className="lg:col-span-1 background-showcase">
             <div className="sticky top-24">
               <TranscriptHistory sessionId={sessionId} />
             </div>

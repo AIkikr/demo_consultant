@@ -29,6 +29,7 @@ Preferred communication style: Simple, everyday language.
 - **Real-time Audio**: Audio level visualization during recording and playback controls
 - **Transcript History**: Comprehensive tracking and display of all user inputs (voice and text) with search and filtering
 - **Windows Microphone Compatibility**: Enhanced microphone diagnostics and troubleshooting for Windows environments
+- **Custom Background Design**: AI consultant cards displayed through strategic gaps between interface panels for visual appeal
 
 ## Data Schema
 - **Users**: Basic user management with username/password authentication
