@@ -27,12 +27,15 @@ Preferred communication style: Simple, everyday language.
 - **Voice Integration**: Voice recording, transcription via OpenAI Whisper, and text-to-speech responses
 - **Session Management**: Persistent chat sessions with message history and mode switching
 - **Real-time Audio**: Audio level visualization during recording and playback controls
+- **Transcript History**: Comprehensive tracking and display of all user inputs (voice and text) with search and filtering
+- **Windows Microphone Compatibility**: Enhanced microphone diagnostics and troubleshooting for Windows environments
 
 ## Data Schema
 - **Users**: Basic user management with username/password authentication
 - **Chat Sessions**: Session-based conversations with mode tracking and message history stored as JSON
 - **Voice Interactions**: Audio transcription and language detection storage
 - **Message Structure**: Structured chat messages with role-based content (user/assistant)
+- **Transcript Tracking**: Messages include transcription field for voice inputs, isVoice flag, and timestamp tracking
 
 ## External Dependencies
 

@@ -3,6 +3,7 @@ import { ChatInterface } from "@/components/chat-interface";
 import { ModeSelector } from "@/components/mode-selector";
 import { VoiceControls } from "@/components/voice-controls";
 import { MicrophoneDiagnostic } from "@/components/microphone-diagnostic";
+import { TranscriptHistory } from "@/components/transcript-history";
 import { useToast } from "@/hooks/use-toast";
 import { type ConsultantMode } from "@shared/schema";
 import { Brain, Languages, Settings2, Mic } from "lucide-react";
@@ -120,7 +121,7 @@ export default function Home() {
           </div>
         )}
         
-        <div className="grid lg:grid-cols-4 gap-6">
+        <div className="grid lg:grid-cols-5 gap-6">
           
           {/* Mode Selector */}
           <div className="lg:col-span-1">
@@ -181,6 +182,13 @@ export default function Home() {
                 language={currentLanguage}
                 isVoiceEnabled={isVoiceEnabled}
               />
+            </div>
+          </div>
+
+          {/* Transcript History */}
+          <div className="lg:col-span-1">
+            <div className="sticky top-24">
+              <TranscriptHistory sessionId={sessionId} />
             </div>
           </div>
         </div>

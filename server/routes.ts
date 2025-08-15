@@ -87,6 +87,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         content: message,
         timestamp: new Date().toISOString(),
         isVoice,
+        transcription: isVoice ? message : undefined, // Save transcription if voice input
       };
 
       const updatedMessages = [...(session.messages || []), userMessage];
@@ -169,6 +170,41 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       const result = await voiceService.processVoiceChat(voiceRequest, mode);
       
+      // Get or create session to save transcript
+      let session = await storage.getChatSession(sessionId);
+      if (!session) {
+        session = await storage.createChatSession(mode);
+      }
+
+      // Add user message with transcription to history
+      const userMessage: ChatMessage = {
+        id: randomUUID(),
+        role: "user",
+        content: result.transcription,
+        timestamp: new Date().toISOString(),
+        isVoice: true,
+        transcription: result.transcription, // Save original transcription
+      };
+
+      // Create AI response message
+      const aiMessage: ChatMessage = {
+        id: randomUUID(),
+        role: "assistant",
+        content: result.response.activeListening,
+        timestamp: new Date().toISOString(),
+        sections: [
+          { type: "active_listening", content: result.response.activeListening },
+          { type: "step_a", content: result.response.stepA },
+          { type: "step_b", content: result.response.stepB },
+          { type: "step_c", content: result.response.stepC },
+          { type: "feedback", content: result.response.feedback },
+        ]
+      };
+
+      // Update session with new messages
+      const updatedMessages = [...(session.messages || []), userMessage, aiMessage];
+      await storage.updateChatSession(sessionId, updatedMessages);
+      
       // Convert audio buffers to base64 for transmission
       const audioResponses = {
         activeListening: result.audioResponses.activeListening.toString('base64'),
@@ -181,7 +217,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.json({
         transcription: result.transcription,
         response: result.response,
-        audioResponses
+        audioResponses,
+        nextActions: result.response.nextActions,
+        sessionId: sessionId,
+        userMessage,
+        aiMessage
       });
 
     } catch (error) {

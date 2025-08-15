@@ -88,8 +88,15 @@ export function ChatInterface({ sessionId, currentMode, language, isVoiceEnabled
       return response.json();
     },
     onSuccess: (data) => {
-      // Add transcribed message to chat
-      setMessage(data.transcription);
+      // Show transcription confirmation to user
+      if (data.transcription) {
+        toast({
+          title: "音声認識完了",
+          description: `「${data.transcription}」`,
+          duration: 3000,
+        });
+      }
+      
       queryClient.invalidateQueries({ queryKey: ['/api/sessions', sessionId] });
       
       // Auto-play AI response if voice is enabled
@@ -216,7 +223,21 @@ export function ChatInterface({ sessionId, currentMode, language, isVoiceEnabled
         <div key={msg.id} className="flex items-start space-x-3 justify-end fade-in">
           <div className="flex-1 text-right">
             <div className="inline-block bg-blue-600 text-white rounded-2xl px-4 py-3 max-w-md">
+              <div className="flex items-center space-x-2 mb-2">
+                {msg.isVoice && (
+                  <div className="flex items-center space-x-1">
+                    <Mic className="w-3 h-3" />
+                    <span className="text-xs bg-blue-500 px-2 py-1 rounded-full">音声</span>
+                  </div>
+                )}
+              </div>
               <p>{msg.content}</p>
+              {msg.transcription && msg.isVoice && (
+                <div className="mt-2 p-2 bg-blue-500/30 rounded-md">
+                  <div className="text-xs opacity-80 mb-1">認識結果:</div>
+                  <div className="text-sm italic">「{msg.transcription}」</div>
+                </div>
+              )}
             </div>
             <div className="text-xs text-slate-400 mt-2">
               {new Date(msg.timestamp).toLocaleTimeString('ja-JP', { 
@@ -225,8 +246,14 @@ export function ChatInterface({ sessionId, currentMode, language, isVoiceEnabled
               })}
             </div>
           </div>
-          <div className="w-8 h-8 bg-blue-600 rounded-full flex items-center justify-center flex-shrink-0">
-            <User className="w-4 h-4 text-white" />
+          <div className={`w-8 h-8 rounded-full flex items-center justify-center flex-shrink-0 ${
+            msg.isVoice ? 'bg-green-600' : 'bg-blue-600'
+          }`}>
+            {msg.isVoice ? (
+              <Mic className="w-4 h-4 text-white" />
+            ) : (
+              <User className="w-4 h-4 text-white" />
+            )}
           </div>
         </div>
       );

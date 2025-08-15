@@ -51,6 +51,7 @@ export const chatMessageSchema = z.object({
   timestamp: z.string(),
   isVoice: z.boolean().optional(),
   audioUrl: z.string().optional(),
+  transcription: z.string().optional(), // Original voice transcription for user messages
   sections: z.array(z.object({
     type: z.enum(["active_listening", "step_a", "step_b", "step_c", "feedback"]),
     content: z.string(),
